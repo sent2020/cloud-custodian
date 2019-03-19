@@ -848,17 +848,33 @@ class HasStatementFilter(BucketFilterBase):
         return None
 
 
-ENCRYPTION_STATEMENT_GLOB = {
+ENCRYPTION_STATEMENT_KMSGLOB = {
     'Effect': 'Deny',
     'Principal': '*',
     'Action': 's3:PutObject',
     "Condition": {
         "StringNotEquals": {
-            "s3:x-amz-server-side-encryption": ["AES256", "aws:kms"]}}}
+            "s3:x-amz-server-side-encryption": "aws:kms"}}}
+
+ENCRYPTION_STATEMENT_SSGLOB = {
+    'Effect': 'Deny',
+    'Principal': '*',
+    'Action': 's3:PutObject',
+    "Condition": {
+        "Null": {
+            "s3:x-amz-server-side-encryption": "true"]}}}
+
+ENCRYPTION_STATEMENT_HTTPSGLOB = {
+    'Effect': 'Deny',
+    'Principal': '*',
+    'Action': ['s3:GetObject','s3:PutObject'],
+    "Condition": {
+        "Bool": {
+            "aws:SecureTransport": "false"}}}
 
 
-@filters.register('no-encryption-statement')
-class EncryptionEnabledFilter(Filter):
+@filters.register('no-kms-encryption-statement')
+class KmsEncryptionEnabledFilter(Filter):
     """Find buckets with missing encryption policy statements.
 
     :example:
@@ -872,7 +888,7 @@ class EncryptionEnabledFilter(Filter):
                   - type: no-encryption-statement
     """
     schema = type_schema(
-        'no-encryption-statement')
+        'no-kms-encryption-statement')
 
     def get_permissions(self):
         perms = self.manager.get_resource_manager('s3').get_permissions()
@@ -886,7 +902,7 @@ class EncryptionEnabledFilter(Filter):
         if p is None:
             return b
         p = json.loads(p)
-        encryption_statement = dict(ENCRYPTION_STATEMENT_GLOB)
+        encryption_statement = dict(ENCRYPTION_STATEMENT_KMSGLOB)
 
         statements = p.get('Statement', [])
         check = False
@@ -902,7 +918,98 @@ class EncryptionEnabledFilter(Filter):
             return None
         else:
             return b
+         
+@filters.register('no-serverside-encryption-statement')
+class ServerSideEncryptionEnabledFilter(Filter):
+    """Find buckets with missing encryption policy statements.
 
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: s3-bucket-not-encrypted
+                resource: s3
+                filters:
+                  - type: no-encryption-statement
+    """
+    schema = type_schema(
+        'no-serverside-encryption-statement')
+
+    def get_permissions(self):
+        perms = self.manager.get_resource_manager('s3').get_permissions()
+        return perms
+
+    def process(self, buckets, event=None):
+        return list(filter(None, map(self.process_bucket, buckets)))
+
+    def process_bucket(self, b):
+        p = b.get('Policy')
+        if p is None:
+            return b
+        p = json.loads(p)
+        encryption_statement = dict(ENCRYPTION_STATEMENT_SSGLOB)
+
+        statements = p.get('Statement', [])
+        check = False
+        for s in list(statements):
+            if 'Sid' in s:
+                encryption_statement["Sid"] = s["Sid"]
+            if 'Resource' in s:
+                encryption_statement["Resource"] = s["Resource"]
+            if s == encryption_statement:
+                check = True
+                break
+        if check:
+            return None
+        else:
+            return b
+         
+@filters.register('no-https-encryption-statement')
+class HttpsEncryptionEnabledFilter(Filter):
+    """Find buckets with missing encryption policy statements.
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: s3-bucket-not-encrypted
+                resource: s3
+                filters:
+                  - type: no-encryption-statement
+    """
+    schema = type_schema(
+        'no-kms-encryption-statement')
+
+    def get_permissions(self):
+        perms = self.manager.get_resource_manager('s3').get_permissions()
+        return perms
+
+    def process(self, buckets, event=None):
+        return list(filter(None, map(self.process_bucket, buckets)))
+
+    def process_bucket(self, b):
+        p = b.get('Policy')
+        if p is None:
+            return b
+        p = json.loads(p)
+        encryption_statement = dict(ENCRYPTION_STATEMENT_HTTPSGLOB)
+
+        statements = p.get('Statement', [])
+        check = False
+        for s in list(statements):
+            if 'Sid' in s:
+                encryption_statement["Sid"] = s["Sid"]
+            if 'Resource' in s:
+                encryption_statement["Resource"] = s["Resource"]
+            if s == encryption_statement:
+                check = True
+                break
+        if check:
+            return None
+        else:
+            return b
 
 @filters.register('missing-statement')
 @filters.register('missing-policy-statement')
@@ -1434,8 +1541,8 @@ class AttachLambdaEncrypt(BucketActionBase):
         return source.add(func)
 
 
-@actions.register('encryption-policy')
-class EncryptionRequiredPolicy(BucketActionBase):
+@actions.register('kms-encryption-policy')
+class KmsEncryptionRequiredPolicy(BucketActionBase):
     """Action to apply an encryption policy to S3 buckets
 
 
@@ -1455,7 +1562,7 @@ class EncryptionRequiredPolicy(BucketActionBase):
     """
 
     permissions = ("s3:GetBucketPolicy", "s3:PutBucketPolicy")
-    schema = type_schema('encryption-policy')
+    schema = type_schema('kms-encryption-policy')
 
     def __init__(self, data=None, manager=None):
         self.data = data or {}
@@ -1475,7 +1582,7 @@ class EncryptionRequiredPolicy(BucketActionBase):
         else:
             p = json.loads(p)
 
-        encryption_sid = "RequiredEncryptedPutObject"
+        encryption_sid = "CCDenyUnEncryptedObjectUploads"
         encryption_statement = {
             'Sid': encryption_sid,
             'Effect': 'Deny',
@@ -1486,7 +1593,177 @@ class EncryptionRequiredPolicy(BucketActionBase):
                 # AWS Managed Keys or KMS keys, note policy language
                 # does not support custom kms (todo add issue)
                 "StringNotEquals": {
-                    "s3:x-amz-server-side-encryption": ["AES256", "aws:kms"]}}}
+                    "s3:x-amz-server-side-encryption": "aws:kms"}}}
+
+        statements = p.get('Statement', [])
+        for s in list(statements):
+            if s.get('Sid', '') == encryption_sid:
+                log.debug("Bucket:%s Found extant encrypt policy", b['Name'])
+                if s != encryption_statement:
+                    log.info(
+                        "Bucket:%s updating extant encrypt policy", b['Name'])
+                    statements.remove(s)
+                else:
+                    return
+
+        session = self.manager.session_factory()
+        s3 = bucket_client(session, b)
+        statements.append(encryption_statement)
+        p['Statement'] = statements
+        log.info('Bucket:%s attached encryption policy' % b['Name'])
+
+        try:
+            s3.put_bucket_policy(
+                Bucket=b['Name'],
+                Policy=json.dumps(p))
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'NoSuchBucket':
+                return
+            self.log.exception(
+                "Error on bucket:%s putting policy\n%s error:%s",
+                b['Name'],
+                json.dumps(statements, indent=2), e)
+            raise
+        return {'Name': b['Name'], 'State': 'PolicyAttached'}
+       
+@actions.register('serverside-encryption-policy')
+class ServerSideEncryptionRequiredPolicy(BucketActionBase):
+    """Action to apply an encryption policy to S3 buckets
+
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: s3-enforce-encryption
+                resource: s3
+                mode:
+                  type: cloudtrail
+                  events:
+                    - CreateBucket
+                actions:
+                  - encryption-policy
+    """
+
+    permissions = ("s3:GetBucketPolicy", "s3:PutBucketPolicy")
+    schema = type_schema('serverside-encryption-policy')
+
+    def __init__(self, data=None, manager=None):
+        self.data = data or {}
+        self.manager = manager
+
+    def process(self, buckets):
+        with self.executor_factory(max_workers=3) as w:
+            results = w.map(self.process_bucket, buckets)
+            results = list(filter(None, list(results)))
+            return results
+
+    def process_bucket(self, b):
+        p = b['Policy']
+        if p is None:
+            log.info("No policy found, creating new")
+            p = {'Version': "2012-10-17", "Statement": []}
+        else:
+            p = json.loads(p)
+
+        encryption_sid = "CCEncryptionEnforcement"
+        encryption_statement = {
+            'Sid': encryption_sid,
+            'Effect': 'Deny',
+            'Principal': '*',
+            'Action': 's3:PutObject',
+            "Resource": "arn:aws:s3:::%s/*" % b['Name'],
+            "Condition": {
+                # AWS Managed Keys or KMS keys, note policy language
+                # does not support custom kms (todo add issue)
+                "Null": {
+                    "s3:x-amz-server-side-encryption": "true"}}}
+
+        statements = p.get('Statement', [])
+        for s in list(statements):
+            if s.get('Sid', '') == encryption_sid:
+                log.debug("Bucket:%s Found extant encrypt policy", b['Name'])
+                if s != encryption_statement:
+                    log.info(
+                        "Bucket:%s updating extant encrypt policy", b['Name'])
+                    statements.remove(s)
+                else:
+                    return
+
+        session = self.manager.session_factory()
+        s3 = bucket_client(session, b)
+        statements.append(encryption_statement)
+        p['Statement'] = statements
+        log.info('Bucket:%s attached encryption policy' % b['Name'])
+
+        try:
+            s3.put_bucket_policy(
+                Bucket=b['Name'],
+                Policy=json.dumps(p))
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'NoSuchBucket':
+                return
+            self.log.exception(
+                "Error on bucket:%s putting policy\n%s error:%s",
+                b['Name'],
+                json.dumps(statements, indent=2), e)
+            raise
+        return {'Name': b['Name'], 'State': 'PolicyAttached'}
+       
+@actions.register('https-encryption-policy')
+class HttpsEncryptionRequiredPolicy(BucketActionBase):
+    """Action to apply an encryption policy to S3 buckets
+
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: s3-enforce-encryption
+                resource: s3
+                mode:
+                  type: cloudtrail
+                  events:
+                    - CreateBucket
+                actions:
+                  - encryption-policy
+    """
+
+    permissions = ("s3:GetBucketPolicy", "s3:PutBucketPolicy")
+    schema = type_schema('https-encryption-policy')
+
+    def __init__(self, data=None, manager=None):
+        self.data = data or {}
+        self.manager = manager
+
+    def process(self, buckets):
+        with self.executor_factory(max_workers=3) as w:
+            results = w.map(self.process_bucket, buckets)
+            results = list(filter(None, list(results)))
+            return results
+
+    def process_bucket(self, b):
+        p = b['Policy']
+        if p is None:
+            log.info("No policy found, creating new")
+            p = {'Version': "2012-10-17", "Statement": []}
+        else:
+            p = json.loads(p)
+
+        encryption_sid = "CCDenyHttp"
+        encryption_statement = {
+            'Sid': encryption_sid,
+            'Effect': 'Deny',
+            'Principal': '*',
+            'Action': ['s3:GetObject','s3:PutObject'],
+            "Resource": "arn:aws:s3:::%s/*" % b['Name'],
+            "Condition": {
+                # AWS Managed Keys or KMS keys, note policy language
+                # does not support custom kms (todo add issue)
+                "Bool": {
+                    "aws:SecureTransport": "false"}}}
 
         statements = p.get('Statement', [])
         for s in list(statements):
