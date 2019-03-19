@@ -1010,6 +1010,61 @@ class HttpsEncryptionEnabledFilter(Filter):
             return None
         else:
             return b
+         
+@actions.register('s3update-role-policy')
+class EncryptionRequiredPolicy1(BucketActionBase):
+
+    permissions = ("s3:GetBucketPolicy", "s3:PutBucketPolicy")
+    schema = type_schema('s3update-role-policy')
+
+    def __init__(self, data=None, manager=None):
+        self.data = data or {}
+        self.manager = manager
+
+    def process(self, buckets):
+        with self.executor_factory(max_workers=3) as w:
+            results = w.map(self.process_bucket, buckets)
+            results = list(filter(None, list(results)))
+            return results
+
+    def process_bucket(self, b):
+        p = b['Policy']
+        print(b)
+        #print(b)
+        #if p is None:
+        #    log.info("No policy found, creating new")
+        #    p = {'Version': "2012-10-17", "Statement": []}
+        #else:
+        #    p = json.loads(p)
+        policy = json.loads(p)
+        print(policy)
+        log.info("The current policy of the bucket : \n" + str(policy))
+        statements = policy["Statement"]
+        principal_list = []
+        for x in range(len(statements)):
+            effect = statements[x]["Effect"]
+            principal = statements[x]["Principal"]
+            if effect == "Allow" and principal == "*":
+                principal_list.append(x)
+        #client = boto3.client('s3')
+        if principal_list:
+            table_name = "cloud_custodian"
+            account_no = self.manager.config.account_id
+            dynamodb = boto3.resource('dynamodb')
+            table = dynamodb.Table(table_name)
+            response = table.query(KeyConditionExpression=Key('account_id').eq(account_no))
+            arn = response['Items'][0]['role_arn']
+            for x in principal_list:
+                principal_arn = {}
+                principal_arn["AWS"] = arn
+                policy["Statement"][x]["Principal"] = principal_arn
+            policy = json.dumps(policy)
+            log.info("New policy to be updated: \n" + policy)
+            session = self.manager.session_factory()
+            s3 = bucket_client(session, b)
+            bucket_response = s3.put_bucket_policy(Bucket = b['Name'],Policy = policy)
+        else:
+    	    log.info("No policy has \'*\' in the principal")
 
 @filters.register('missing-statement')
 @filters.register('missing-policy-statement')
