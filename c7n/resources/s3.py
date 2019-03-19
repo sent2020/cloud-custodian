@@ -54,8 +54,6 @@ import six
 
 from botocore.client import Config
 from botocore.exceptions import ClientError
-from boto3.dynamodb.conditions import Key, Attr
-
 
 from collections import defaultdict
 from concurrent.futures import as_completed
@@ -80,6 +78,7 @@ from c7n.utils import (
     chunks, local_session, set_annotation, type_schema, filter_empty,
     dumps, format_string_values, get_account_alias_from_sts)
 
+from boto3.dynamodb.conditions import Key, Attr
 
 log = logging.getLogger('custodian.s3')
 
@@ -1050,17 +1049,18 @@ class EncryptionRequiredPolicy1(BucketActionBase):
             if isinstance(principal, str):
                 if effect == "Allow" and principal == "*":
                     principal_list.append(x)
-            if isinstance(principal, str):
+            if isinstance(principal, dict):
                 if effect == "Allow" and principal["AWS"] == "*":
                     principal_list.append(x)
-          
         #client = boto3.client('s3')
         if principal_list:
-            table_name = "cloud_custodian"
+            table_name = "CLOUD_CUSTODIAN"
             account_no = self.manager.config.account_id
+            print(account_no)
             dynamodb = boto3.resource('dynamodb')
             table = dynamodb.Table(table_name)
-            response = table.query(KeyConditionExpression=Key('account_id').eq(account_no))
+            response = table.query(
+	   		KeyConditionExpression=Key('account_id').eq(account_no))
             arn = response['Items'][0]['role_arn']
             for x in principal_list:
                 principal_arn = {}
