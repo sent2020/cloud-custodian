@@ -54,6 +54,8 @@ import six
 
 from botocore.client import Config
 from botocore.exceptions import ClientError
+from boto3.dynamodb.conditions import Key, Attr
+
 
 from collections import defaultdict
 from concurrent.futures import as_completed
