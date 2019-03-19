@@ -862,7 +862,7 @@ ENCRYPTION_STATEMENT_SSGLOB = {
     'Action': 's3:PutObject',
     "Condition": {
         "Null": {
-            "s3:x-amz-server-side-encryption": "true"]}}}
+            "s3:x-amz-server-side-encryption": "true"}}}
 
 ENCRYPTION_STATEMENT_HTTPSGLOB = {
     'Effect': 'Deny',
