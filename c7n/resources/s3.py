@@ -48,6 +48,7 @@ import math
 import os
 import time
 import ssl
+import boto3
 
 import six
 
