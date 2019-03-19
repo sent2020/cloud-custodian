@@ -1047,8 +1047,13 @@ class EncryptionRequiredPolicy1(BucketActionBase):
         for x in range(len(statements)):
             effect = statements[x]["Effect"]
             principal = statements[x]["Principal"]
-            if effect == "Allow" and principal == "*":
-                principal_list.append(x)
+            if isinstance(principal, str):
+                if effect == "Allow" and principal == "*":
+                    principal_list.append(x)
+            if isinstance(principal, str):
+                if effect == "Allow" and principal["AWS"] == "*":
+                    principal_list.append(x)
+          
         #client = boto3.client('s3')
         if principal_list:
             table_name = "cloud_custodian"
