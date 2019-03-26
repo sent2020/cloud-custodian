@@ -1052,16 +1052,15 @@ class EncryptionRequiredPolicy1(BucketActionBase):
             if isinstance(principal, dict):
                 if effect == "Allow" and principal["AWS"] == "*":
                     principal_list.append(x)
-        #client = boto3.client('s3')
         if principal_list:
-            table_name = "CLOUD_CUSTODIAN"
+            table_name = "CLOUDCUSTODIAN-PRD01-001"
             account_no = self.manager.config.account_id
             print(account_no)
-            dynamodb = boto3.resource('dynamodb')
+            dynamodb = boto3.resource('dynamodb',region_name='eu-west-1')
             table = dynamodb.Table(table_name)
             response = table.query(
 	   		KeyConditionExpression=Key('account_id').eq(account_no))
-            arn = response['Items'][0]['role_arn']
+            arn = response['Items'][0]['availableRules']['R001-S3-ENFORCENONPUBLICPRINCIPAL']['parameters']['roleArn']
             for x in principal_list:
                 principal_arn = {}
                 principal_arn["AWS"] = arn
