@@ -1059,7 +1059,7 @@ class EncryptionRequiredPolicy1(BucketActionBase):
             dynamodb = boto3.resource('dynamodb',region_name='eu-west-1')
             table = dynamodb.Table(table_name)
             response = table.query(
-	   		KeyConditionExpression=Key('account_id').eq(account_no))
+	   		KeyConditionExpression=Key('accountId').eq(account_no))
             arn = response['Items'][0]['availableRules']['R001-S3-ENFORCENONPUBLICPRINCIPAL']['parameters']['roleArn']
             for x in principal_list:
                 principal_arn = {}
