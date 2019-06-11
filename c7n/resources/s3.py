@@ -1055,12 +1055,14 @@ class EncryptionRequiredPolicy1(BucketActionBase):
         if principal_list:
             table_name = "CLOUDCUSTODIAN-PRD01-001"
             account_no = self.manager.config.account_id
+	    region = self.manager.config.region
             print(account_no)
+	    ruleId = os.environ['RULEID']
             dynamodb = boto3.resource('dynamodb',region_name='eu-west-1')
             table = dynamodb.Table(table_name)
             response = table.query(
 	   		KeyConditionExpression=Key('accountId').eq(account_no))
-            arn = response['Items'][0]['availableRules']['R001-S3-ENFORCENONPUBLICPRINCIPAL']['parameters']['roleArn']
+            arn = response['Items'][0]['availableRules'][ruleId]['parameters']['roleArn']
             for x in principal_list:
                 principal_arn = {}
                 principal_arn["AWS"] = arn
@@ -1070,6 +1072,9 @@ class EncryptionRequiredPolicy1(BucketActionBase):
             session = self.manager.session_factory()
             s3 = bucket_client(session, b)
             bucket_response = s3.put_bucket_policy(Bucket = b['Name'],Policy = policy)
+	    resource_id = b['Name']
+	    log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
+                    ruleId, account_no, region, resource_id))
         else:
     	    log.info("No policy has \'*\' in the principal")
 
