@@ -1798,7 +1798,7 @@ class HttpsEncryptionRequiredPolicy(BucketActionBase):
                   - encryption-policy
     """
 
-    permissions = ("s3:GetBucketPolicy", "s3:PutBucketPolicy")
+    permissions = ("s3:GetBucketPolicy", "s3:PutBucketPolicy", "s3:DeleteBucketPolicy")
     schema = type_schema('https-encryption-policy')
 
     def __init__(self, data=None, manager=None):
