@@ -440,6 +440,10 @@ class LambdaMode(ServerlessExecutionMode):
             root = logging.getLogger()
             map(root.removeHandler, root.handlers[:])
             root.handlers = [logging.NullHandler()]
+        
+        member_id = self.get_member_account_id(event)
+        region = self.get_member_region(event)
+        resource_ids = CloudWatchEvents.get_ids(event, mode)
 
         resources = self.resolve_resources(event)
         if not resources:
@@ -454,6 +458,9 @@ class LambdaMode(ServerlessExecutionMode):
             self.policy.log.info(
                 "policy: %s resources: %s no resources matched" % (
                     self.policy.name, self.policy.resource_type))
+            self.policy.log.info(
+                "Compliant resource matched: Rule: %s: Account: %s region: %s type: %s resource: %s" % (
+                    self.policy.name, member_id, region, self.policy.resource_type, resource_ids[0]))
             return
 
         with self.policy.ctx:
