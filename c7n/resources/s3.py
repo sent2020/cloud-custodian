@@ -1071,10 +1071,28 @@ class EncryptionRequiredPolicy1(BucketActionBase):
             log.info("New policy to be updated: \n" + policy)
             session = self.manager.session_factory()
             s3 = bucket_client(session, b)
-            bucket_response = s3.put_bucket_policy(Bucket = b['Name'],Policy = policy)
-	    resource_id = b['Name']
-	    log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
+	    try:
+		bucket_response = s3.put_bucket_policy(Bucket = b['Name'],Policy = policy)
+		resource_id = b['Name']
+		log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
                     ruleId, account_no, region, resource_id))
+	    except ClientError as e:
+		 print(e.response['Error']['Message'])
+		 exceptionResponse = e.response['Error']['Message']
+		 exceptionMsg = 'Normalized policy document exceeds the maximum allowed size of 20480 bytes'
+           	 if exceptionMsg in exceptionResponse:
+			q = {'Version': "2012-10-17", "Statement": []}
+			encryption_statement = {
+          		  	'Sid': 'CCDenyPublicAccess,
+           			'Effect': 'Allow',
+            			'Principal': {"AWS" : "%s" % arn},
+            			'Action': 's3:*',
+            			"Resource": "arn:aws:s3:::%s/*" % b['Name']
+			        }
+			q['Statement'] = encryption_statement
+			s3.delete_bucket_policy(Bucket=b['Name'])
+                	s3.put_bucket_policy(Bucket=b['Name'],Policy=json.dumps(q))
+		
         else:
     	    log.info("No policy has \'*\' in the principal")
 
