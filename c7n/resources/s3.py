@@ -1083,7 +1083,7 @@ class EncryptionRequiredPolicy1(BucketActionBase):
            	 if exceptionMsg in exceptionResponse:
 			q = {'Version': "2012-10-17", "Statement": []}
 			encryption_statement = {
-          		  	'Sid': 'CCDenyPublicAccess,
+          		  	'Sid': 'CCDenyPublicAccess',
            			'Effect': 'Allow',
             			'Principal': {"AWS" : "%s" % arn},
             			'Action': 's3:*',
