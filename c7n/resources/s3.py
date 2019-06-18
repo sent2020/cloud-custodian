@@ -1055,9 +1055,9 @@ class EncryptionRequiredPolicy1(BucketActionBase):
         if principal_list:
             table_name = "CLOUDCUSTODIAN-PRD01-001"
             account_no = self.manager.config.account_id
-	    region = self.manager.config.region
+            region = self.manager.config.region
             print(account_no)
-	    ruleId = os.environ['RULEID']
+            ruleId = os.environ['RULEID']
             dynamodb = boto3.resource('dynamodb',region_name='eu-west-1')
             table = dynamodb.Table(table_name)
             response = table.query(
@@ -1071,27 +1071,21 @@ class EncryptionRequiredPolicy1(BucketActionBase):
             log.info("New policy to be updated: \n" + policy)
             session = self.manager.session_factory()
             s3 = bucket_client(session, b)
-	    try:
-		bucket_response = s3.put_bucket_policy(Bucket = b['Name'],Policy = policy)
-		resource_id = b['Name']
-		log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
+            try:
+                bucket_response = s3.put_bucket_policy(Bucket = b['Name'],Policy = policy)
+                resource_id = b['Name']
+                log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
                     ruleId, account_no, region, resource_id))
-	    except ClientError as e:
-		 print(e.response['Error']['Message'])
-		 exceptionResponse = e.response['Error']['Message']
-		 exceptionMsg = 'Normalized policy document exceeds the maximum allowed size of 20480 bytes'
-           	 if exceptionMsg in exceptionResponse:
-			q = {'Version': "2012-10-17", "Statement": []}
-			encryption_statement = {
-          		  	'Sid': 'CCDenyPublicAccess',
-           			'Effect': 'Allow',
-            			'Principal': {"AWS" : "%s" % arn},
-            			'Action': 's3:*',
-            			"Resource": "arn:aws:s3:::%s/*" % b['Name']
-			        }
-			q['Statement'] = encryption_statement
-			s3.delete_bucket_policy(Bucket=b['Name'])
-                	s3.put_bucket_policy(Bucket=b['Name'],Policy=json.dumps(q))
+            except ClientError as e:
+                print(e.response['Error']['Message'])
+                exceptionResponse = e.response['Error']['Message']
+                exceptionMsg = 'Normalized policy document exceeds the maximum allowed size of 20480 bytes'
+                if exceptionMsg in exceptionResponse:
+                    q = {'Version': "2012-10-17", "Statement": []}
+                    encryption_statement = {'Sid': 'CCDenyPublicAccess', 'Effect': 'Allow', 'Principal': {"AWS" : "%s" % arn},'Action': 's3:*', "Resource": "arn:aws:s3:::%s/*" % b['Name']}
+                    q['Statement'] = encryption_statement
+                    s3.delete_bucket_policy(Bucket=b['Name'])
+                    s3.put_bucket_policy(Bucket=b['Name'],Policy=json.dumps(q))
 		
         else:
     	    log.info("No policy has \'*\' in the principal")
@@ -1666,8 +1660,8 @@ class KmsEncryptionRequiredPolicy(BucketActionBase):
             p = {'Version': "2012-10-17", "Statement": []}
         else:
             p = json.loads(p)
-
-	q = {'Version': "2012-10-17", "Statement": []}
+        
+        q = {'Version': "2012-10-17", "Statement": []}
         encryption_sid = "CCDenyUnEncryptedObjectUploads"
         encryption_statement = {
             'Sid': encryption_sid,
@@ -1680,11 +1674,10 @@ class KmsEncryptionRequiredPolicy(BucketActionBase):
                 # does not support custom kms (todo add issue)
                 "StringNotEquals": {
                     "s3:x-amz-server-side-encryption": "aws:kms"}}}
-	
-	account_no = self.manager.config.account_id
-	region = self.manager.config.region
-	ruleId = os.environ['RULEID']
-	resource_id = b['Name']
+        account_no = self.manager.config.account_id
+        region = self.manager.config.region
+        ruleId = os.environ['RULEID']
+        resource_id = b['Name']
 
         statements = p.get('Statement', [])
         for s in list(statements):
@@ -1701,17 +1694,16 @@ class KmsEncryptionRequiredPolicy(BucketActionBase):
         s3 = bucket_client(session, b)
         statements.append(encryption_statement)
         p['Statement'] = statements
-	q['Statement'] = encryption_statement
+        q['Statement'] = encryption_statement
         log.info('Bucket:%s attached encryption policy' % b['Name'])
 
         try:
             s3.put_bucket_policy(
                 Bucket=b['Name'],
                 Policy=json.dumps(p))
-	    log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
-                    ruleId, account_no, region, resource_id))
+            log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (ruleId, account_no, region, resource_id))
         except ClientError as e:
-	    print(e.response['Error']['Message'])
+            print(e.response['Error']['Message'])
             exceptionResponse = e.response['Error']['Message']
             exceptionMsg = 'Normalized policy document exceeds the maximum allowed size of 20480 bytes'
             if exceptionMsg in exceptionResponse:
@@ -1767,8 +1759,7 @@ class ServerSideEncryptionRequiredPolicy(BucketActionBase):
             p = {'Version': "2012-10-17", "Statement": []}
         else:
             p = json.loads(p)
-	
-	q = {'Version': "2012-10-17", "Statement": []}
+        q = {'Version': "2012-10-17", "Statement": []}
         encryption_sid = "CCEncryptionEnforcement"
         encryption_statement = {
             'Sid': encryption_sid,
@@ -1781,11 +1772,11 @@ class ServerSideEncryptionRequiredPolicy(BucketActionBase):
                 # does not support custom kms (todo add issue)
                 "Null": {
                     "s3:x-amz-server-side-encryption": "true"}}}
-	
-	account_no = self.manager.config.account_id
-	region = self.manager.config.region
-	ruleId = os.environ['RULEID']
-	resource_id = b['Name']
+                    
+        account_no = self.manager.config.account_id
+        region = self.manager.config.region
+        ruleId = os.environ['RULEID']
+        resource_id = b['Name']
 
         statements = p.get('Statement', [])
         for s in list(statements):
@@ -1802,17 +1793,17 @@ class ServerSideEncryptionRequiredPolicy(BucketActionBase):
         s3 = bucket_client(session, b)
         statements.append(encryption_statement)
         p['Statement'] = statements
-	q['Statement'] = encryption_statement
+        q['Statement'] = encryption_statement
         log.info('Bucket:%s attached encryption policy' % b['Name'])
 
         try:
             s3.put_bucket_policy(
                 Bucket=b['Name'],
                 Policy=json.dumps(p))
-	    log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
-                    ruleId, account_no, region, resource_id))
+            log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (ruleId, account_no, region, resource_id))
+	        
         except ClientError as e:
-	    print(e.response['Error']['Message'])
+            print(e.response['Error']['Message'])
             exceptionResponse = e.response['Error']['Message']
             exceptionMsg = 'Normalized policy document exceeds the maximum allowed size of 20480 bytes'
             if exceptionMsg in exceptionResponse:
@@ -1882,12 +1873,10 @@ class HttpsEncryptionRequiredPolicy(BucketActionBase):
                 # does not support custom kms (todo add issue)
                 "Bool": {
                     "aws:SecureTransport": "false"}}}
-	
-	account_no = self.manager.config.account_id
-	region = self.manager.config.region
-	ruleId = os.environ['RULEID']
-	resource_id = b['Name']
-
+        account_no = self.manager.config.account_id
+        region = self.manager.config.region
+        ruleId = os.environ['RULEID']
+        resource_id = b['Name']
 
         statements = p.get('Statement', [])
         for s in list(statements):
@@ -1904,18 +1893,18 @@ class HttpsEncryptionRequiredPolicy(BucketActionBase):
         s3 = bucket_client(session, b)
         statements.append(encryption_statement)
         p['Statement'] = statements
-	q['Statement'] = encryption_statement
+        q['Statement'] = encryption_statement
         log.info('Bucket:%s attached encryption policy' % b['Name'])
 
         try:
             s3.put_bucket_policy(
                 Bucket=b['Name'],
                 Policy=json.dumps(p))
-	    log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
+            log.info("Non-Compliant resource remediated: Rule: %s Account: %s Region: %s type: s3 resource: %s" % (
                     ruleId, account_no, region, resource_id))
 	    
         except ClientError as e:
-	    print(e.response['Error']['Message'])
+            print(e.response['Error']['Message'])
             exceptionResponse = e.response['Error']['Message']
             exceptionMsg = 'Normalized policy document exceeds the maximum allowed size of 20480 bytes'
             if exceptionMsg in exceptionResponse:
@@ -3406,3 +3395,4 @@ class SetBucketEncryption(KMSKeyResolverMixin, BucketActionBase):
             Bucket=bucket['Name'],
             ServerSideEncryptionConfiguration=config
         )
+
