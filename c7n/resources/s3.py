@@ -1082,8 +1082,9 @@ class EncryptionRequiredPolicy1(BucketActionBase):
                 exceptionMsg = 'Normalized policy document exceeds the maximum allowed size of 20480 bytes'
                 if exceptionMsg in exceptionResponse:
                     q = {'Version': "2012-10-17", "Statement": []}
-                    encryption_statement = {'Sid': 'CCDenyPublicAccess', 'Effect': 'Allow', 'Principal': {"AWS" : "%s" % arn},'Action': 's3:*', "Resource": "arn:aws:s3:::%s/*" % b['Name']}
+                    encryption_statement = {'Sid': 'CCDenyPublicAccess', 'Effect': 'Allow', 'Principal': {"AWS" : arn},'Action': 's3:*', "Resource": "arn:aws:s3:::%s/*" % b['Name']}
                     q['Statement'] = encryption_statement
+                    print(json.dumps(q))
                     s3.delete_bucket_policy(Bucket=b['Name'])
                     s3.put_bucket_policy(Bucket=b['Name'],Policy=json.dumps(q))
 		
