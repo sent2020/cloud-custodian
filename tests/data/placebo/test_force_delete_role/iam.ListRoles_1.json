@@ -6,7 +6,7 @@
                 "Path": "/aws-service-role/support.amazonaws.com/",
                 "RoleName": "AWSServiceRoleForSupport",
                 "RoleId": "AROAJWGLHKEUYCDFCDPXG",
-                "Arn": "arn:aws:iam::872247246277:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
+                "Arn": "arn:aws:iam::XXXXXXXXXXXX:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
                 "CreateDate": {
                     "__class__": "datetime",
                     "year": 2019,
@@ -25,7 +25,7 @@
                 "Path": "/",
                 "RoleName": "c7n-pratyush-test",
                 "RoleId": "AROA4WFP4XXCRQBN4WXZD",
-                "Arn": "arn:aws:iam::872247246277:role/c7n-pratyush-test",
+                "Arn": "arn:aws:iam::XXXXXXXXXXXX:role/c7n-pratyush-test",
                 "CreateDate": {
                     "__class__": "datetime",
                     "year": 2019,
