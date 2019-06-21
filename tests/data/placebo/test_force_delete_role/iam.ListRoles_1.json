@@ -1,0 +1,56 @@
+{
+    "status_code": 200,
+    "data": {
+        "Roles": [
+            {
+                "Path": "/aws-service-role/support.amazonaws.com/",
+                "RoleName": "AWSServiceRoleForSupport",
+                "RoleId": "AROAJWGLHKEUYCDFCDPXG",
+                "Arn": "arn:aws:iam::872247246277:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
+                "CreateDate": {
+                    "__class__": "datetime",
+                    "year": 2019,
+                    "month": 1,
+                    "day": 19,
+                    "hour": 23,
+                    "minute": 27,
+                    "second": 57,
+                    "microsecond": 0
+                },
+                "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22support.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
+                "Description": "Enables resource access for AWS to provide billing, administrative and support services",
+                "MaxSessionDuration": 3600
+            },
+            {
+                "Path": "/pratyush/",
+                "RoleName": "c7n-pratyush-test",
+                "RoleId": "AROA4WFP4XXCUAOT3YM3E",
+                "Arn": "arn:aws:iam::872247246277:role/pratyush/c7n-pratyush-test",
+                "CreateDate": {
+                    "__class__": "datetime",
+                    "year": 2019,
+                    "month": 6,
+                    "day": 21,
+                    "hour": 14,
+                    "minute": 15,
+                    "second": 16,
+                    "microsecond": 0
+                },
+                "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22batch.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
+                "MaxSessionDuration": 3600
+            }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+            "RequestId": "fe7a3917-942e-11e9-a9e7-edf2f5f1aca7",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+                "x-amzn-requestid": "fe7a3917-942e-11e9-a9e7-edf2f5f1aca7",
+                "content-type": "text/xml",
+                "content-length": "1718",
+                "date": "Fri, 21 Jun 2019 14:15:16 GMT"
+            },
+            "RetryAttempts": 0
+        }
+    }
+}

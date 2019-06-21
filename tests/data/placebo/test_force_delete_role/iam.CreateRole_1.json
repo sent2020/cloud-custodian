@@ -1,0 +1,39 @@
+{
+    "status_code": 200,
+    "data": {
+        "Role": {
+            "Path": "/pratyush/",
+            "RoleName": "c7n-pratyush-test",
+            "RoleId": "AROA4WFP4XXCUAOT3YM3E",
+            "Arn": "arn:aws:iam::872247246277:role/pratyush/c7n-pratyush-test",
+            "CreateDate": {
+                "__class__": "datetime",
+                "year": 2019,
+                "month": 6,
+                "day": 21,
+                "hour": 14,
+                "minute": 15,
+                "second": 16,
+                "microsecond": 0
+            },
+            "AssumeRolePolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Effect%22%3A%20%22Allow%22%2C%20%22Principal%22%3A%20%7B%22Service%22%3A%20%22batch.amazonaws.com%22%7D%2C%20%22Action%22%3A%20%22sts%3AAssumeRole%22%7D%5D%7D",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "Pratyush"
+                }
+            ]
+        },
+        "ResponseMetadata": {
+            "RequestId": "fe53773d-942e-11e9-a119-f17d98cf0d01",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+                "x-amzn-requestid": "fe53773d-942e-11e9-a119-f17d98cf0d01",
+                "content-type": "text/xml",
+                "content-length": "927",
+                "date": "Fri, 21 Jun 2019 14:15:16 GMT"
+            },
+            "RetryAttempts": 0
+        }
+    }
+}

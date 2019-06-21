@@ -830,7 +830,10 @@ class RoleDelete(BaseAction):
             - delete
 
     """
-    schema = type_schema('delete')
+    schema = type_schema(
+        'delete',
+        force={'type': 'boolean', 'default': False})
+
     permissions = ('iam:DeleteRole',)
 
     def process(self, resources):
@@ -840,10 +843,18 @@ class RoleDelete(BaseAction):
             try:
                 client.delete_role(RoleName=r['RoleName'])
             except client.exceptions.DeleteConflictException as e:
-                self.log.warning(
-                    "Role:%s cannot be deleted, must remove role from instance profile first"
-                    % r['Arn'])
-                error = e
+                if self.data.get('force', False):
+                    attached_policy = client.list_attached_role_policies(RoleName=r['RoleName'])
+                    policy_arns = [p.get('PolicyArn') for p in attached_policy['AttachedPolicies']]
+                    for parn in policy_arns:
+                        client.detach_role_policy(RoleName=r['RoleName'], PolicyArn=parn)
+                    client.delete_role(RoleName=r['RoleName'])
+                    continue
+                else:
+                    self.log.warning(
+                        "Role:%s cannot be deleted, must remove role from instance profile first"
+                        % r['Arn'])
+                    error = e
             except client.exceptions.NoSuchEntityException:
                 continue
             except client.exceptions.UnmodifiableEntityException:
