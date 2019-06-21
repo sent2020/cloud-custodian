@@ -2,21 +2,22 @@
     "status_code": 200,
     "data": {
         "Role": {
-            "Path": "/pratyush/",
+            "Path": "/",
             "RoleName": "c7n-pratyush-test",
-            "RoleId": "AROA4WFP4XXCUAOT3YM3E",
-            "Arn": "arn:aws:iam::872247246277:role/pratyush/c7n-pratyush-test",
+            "RoleId": "AROA4WFP4XXCRQBN4WXZD",
+            "Arn": "arn:aws:iam::872247246277:role/c7n-pratyush-test",
             "CreateDate": {
                 "__class__": "datetime",
                 "year": 2019,
                 "month": 6,
                 "day": 21,
-                "hour": 14,
-                "minute": 15,
-                "second": 16,
+                "hour": 19,
+                "minute": 45,
+                "second": 58,
                 "microsecond": 0
             },
-            "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22batch.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
+            "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22apigateway.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
+            "Description": "Allows API Gateway to push logs to CloudWatch Logs.",
             "MaxSessionDuration": 3600,
             "Tags": [
                 {
@@ -26,13 +27,13 @@
             ]
         },
         "ResponseMetadata": {
-            "RequestId": "fe9e3bd2-942e-11e9-8e8b-a729701c2096",
+            "RequestId": "3ea12c76-945d-11e9-acaf-bb57d635757b",
             "HTTPStatusCode": 200,
             "HTTPHeaders": {
-                "x-amzn-requestid": "fe9e3bd2-942e-11e9-8e8b-a729701c2096",
+                "x-amzn-requestid": "3ea12c76-945d-11e9-acaf-bb57d635757b",
                 "content-type": "text/xml",
-                "content-length": "940",
-                "date": "Fri, 21 Jun 2019 14:15:16 GMT"
+                "content-length": "1033",
+                "date": "Fri, 21 Jun 2019 19:46:21 GMT"
             },
             "RetryAttempts": 0
         }

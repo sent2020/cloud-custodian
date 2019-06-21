@@ -1462,34 +1462,20 @@ class DeleteRoleAction(BaseTest):
         self.assertEqual(len(resources), 1)
         self.assertRaises(ClientError, client.get_role, RoleName=resources[0]['RoleName'])
 
-    @functional
     def test_force_delete_role(self):
         factory = self.replay_flight_data("test_force_delete_role")
-        policy_doc = json.dumps({
-            "Version": "2012-10-17",
-            "Statement": [{
-                "Effect": "Allow",
-                "Principal": {
-                    "Service": "batch.amazonaws.com"
-                },
-                "Action": "sts:AssumeRole"
-            }]
-        })
-        client = factory().client("iam")
-        client.create_role(
-            RoleName="c7n-pratyush-test", AssumeRolePolicyDocument=policy_doc, Path='/pratyush/',
-            Tags=[{'Key': 'Name', 'Value': 'Pratyush'}])
         policy = self.load_policy(
             {
                 'name': 'iam-force-delete-role',
                 'resource': 'iam-role',
                 'filters': [{'tag:Name': 'Pratyush'}],
-                "actions": [{"type": "delete", "force": "True"}],
+                "actions": [{"type": "delete", "force": True}],
             },
             session_factory=factory
         )
         resources = policy.run()
         self.assertEqual(len(resources), 1)
+        client = factory().client("iam")
         self.assertRaises(ClientError, client.get_role, RoleName=resources[0]['RoleName'])
 
     def test_delete_role_error(self):

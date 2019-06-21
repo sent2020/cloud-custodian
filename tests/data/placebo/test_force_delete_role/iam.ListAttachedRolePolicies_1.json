@@ -1,0 +1,31 @@
+{
+    "status_code": 200,
+    "data": {
+        "AttachedPolicies": [
+            {
+                "PolicyName": "AmazonEC2ContainerRegistryFullAccess",
+                "PolicyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+            },
+            {
+                "PolicyName": "AmazonAPIGatewayPushToCloudWatchLogs",
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+            },
+            {
+                "PolicyName": "AdministratorAccess",
+                "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+            }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+            "RequestId": "3ebaf5a4-945d-11e9-9c45-615ae964032e",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+                "x-amzn-requestid": "3ebaf5a4-945d-11e9-9c45-615ae964032e",
+                "content-type": "text/xml",
+                "content-length": "941",
+                "date": "Fri, 21 Jun 2019 19:46:21 GMT"
+            },
+            "RetryAttempts": 0
+        }
+    }
+}
