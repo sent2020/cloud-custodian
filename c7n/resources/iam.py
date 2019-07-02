@@ -841,7 +841,7 @@ class RoleDelete(BaseAction):
               LastAuthenticated: null
           actions:
             - type: delete
-              force: true
+              force: True
 
     """
     schema = type_schema('delete',
