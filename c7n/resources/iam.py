@@ -779,17 +779,11 @@ class SetPolicy(BaseAction):
               value: my-iam-policy
           actions:
             - type: set-policy
-              state: attached
-              arn: arn:aws:iam::123456789012:policy/my-iam-policy
-        - name: iam-detach-all-role-policy
-          resource: iam-role
-          filters:
-            - type: no-specific-managed-policy
-              value: my-iam-policy
-          actions:
-            - type: set-policy
               state: detached
               arn: *
+            - type: set-policy
+              state: attached
+              arn: arn:aws:iam::123456789012:policy/my-iam-policy
 
     """
     schema = type_schema(
@@ -846,10 +840,7 @@ class RoleDelete(BaseAction):
               match-operator: all
               LastAuthenticated: null
           actions:
-            - type: set-policy
-              state: detached
-              arn: *
-            - type: delete
+            - delete
 
     """
     schema = type_schema('delete')
