@@ -860,7 +860,7 @@ class RoleDelete(BaseAction):
                 client.delete_role(RoleName=r['RoleName'])
             except client.exceptions.DeleteConflictException as e:
                 self.log.warning(
-                    "Role:%s cannot be deleted, use action: set-policy to detach all policies"
+                    "Role:%s cannot be deleted, set force to detach policy and delete"
                     % r['Arn'])
                 error = e
             except client.exceptions.NoSuchEntityException:
