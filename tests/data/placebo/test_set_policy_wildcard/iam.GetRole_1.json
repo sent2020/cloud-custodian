@@ -5,7 +5,7 @@
             "Path": "/aws-service-role/support.amazonaws.com/",
             "RoleName": "AWSServiceRoleForSupport",
             "RoleId": "AROAJWGLHKEUYCDFCDPXG",
-            "Arn": "arn:aws:iam::872247246277:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
+            "Arn": "arn:aws:iam::XXXXXXXXXXXX:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
             "CreateDate": {
                 "__class__": "datetime",
                 "year": 2019,
