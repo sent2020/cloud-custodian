@@ -840,16 +840,21 @@ class RoleDelete(BaseAction):
               match-operator: all
               LastAuthenticated: null
           actions:
-            - delete
+            - type: delete
+              force: true
 
     """
-    schema = type_schema('delete')
+    schema = type_schema('delete',
+        force={'type': 'boolean', 'default': False})
 
     permissions = ('iam:DeleteRole',)
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('iam')
         error = None
+        if self.data.get('force', False):
+            policy_setter = self.manager.action_registry['set-policy']({'state': 'detached', 'arn': '*'}, self.manager)
+            policy_setter.process(resources)
         for r in resources:
             try:
                 client.delete_role(RoleName=r['RoleName'])

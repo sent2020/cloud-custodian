@@ -1462,8 +1462,8 @@ class DeleteRoleAction(BaseTest):
         self.assertEqual(len(resources), 1)
         self.assertRaises(ClientError, client.get_role, RoleName=resources[0]['RoleName'])
 
-    def test_force_delete_role(self):
-        factory = self.replay_flight_data("test_force_delete_role")
+    def test_set_policy_wildcard(self):
+        factory = self.replay_flight_data("test_set_policy_wildcard")
         policy = self.load_policy(
             {
                 'name': 'iam-force-delete-role',
@@ -1474,9 +1474,25 @@ class DeleteRoleAction(BaseTest):
                         "type": "set-policy",
                         "state": "detached",
                         "arn": "*",
-                    },
-                    {"type": "delete"}
+                    }
                 ]
+            },
+            session_factory=factory
+        )
+        resources = policy.run()
+        self.assertEqual(len(resources), 1)
+        client = factory().client("iam")
+        self.assertEqual(
+            len((client.list_attached_role_policies(RoleName=resources[0]['RoleName']))['AttachedPolicies']), 0)
+
+    def test_force_delete_role(self):
+        factory = self.replay_flight_data("test_force_delete_role")
+        policy = self.load_policy(
+            {
+                'name': 'iam-force-delete-role',
+                'resource': 'iam-role',
+                'filters': [{'tag:Name': 'Pratyush'}],
+                "actions": [{"type": "delete", "force": True}],
             },
             session_factory=factory
         )
