@@ -781,7 +781,6 @@ class SetPolicy(BaseAction):
             - type: set-policy
               state: attached
               arn: arn:aws:iam::123456789012:policy/my-iam-policy
-        
         - name: iam-detach-all-role-policy
           resource: iam-role
           filters:
@@ -807,14 +806,13 @@ class SetPolicy(BaseAction):
         state = self.data['state']
         if state == 'attached' and policy_arn == "*":
             raise PolicyValidationError(
-                    'State should be detached when arn is * on %s' % (
-                        self.manager.data))
+                'State should be detached when arn is * on %s' % (self.manager.data))
         for r in resources:
             if state == 'attached':
                 client.attach_role_policy(
                     RoleName=r['RoleName'],
                     PolicyArn=policy_arn)
-            elif state == 'detached' and not policy_arn == "*" :
+            elif state == 'detached' and not policy_arn == "*":
                 try:
                     client.detach_role_policy(
                         RoleName=r['RoleName'],
@@ -829,7 +827,6 @@ class SetPolicy(BaseAction):
                         client.detach_role_policy(RoleName=r['RoleName'], PolicyArn=parn)
                     except client.exceptions.NoSuchEntityException:
                         continue
-
 
 
 @Role.action_registry.register('delete')
