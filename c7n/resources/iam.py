@@ -781,6 +781,16 @@ class SetPolicy(BaseAction):
             - type: set-policy
               state: attached
               arn: arn:aws:iam::123456789012:policy/my-iam-policy
+        
+        - name: iam-detach-all-role-policy
+          resource: iam-role
+          filters:
+            - type: no-specific-managed-policy
+              value: my-iam-policy
+          actions:
+            - type: set-policy
+              state: detached
+              arn: *
 
     """
     schema = type_schema(
@@ -795,19 +805,31 @@ class SetPolicy(BaseAction):
         client = local_session(self.manager.session_factory).client('iam')
         policy_arn = self.data['arn']
         state = self.data['state']
-
+        if state == 'attached' and policy_arn == "*":
+            raise PolicyValidationError(
+                    'State should be detached when arn is * on %s' % (
+                        self.manager.data))
         for r in resources:
             if state == 'attached':
                 client.attach_role_policy(
                     RoleName=r['RoleName'],
                     PolicyArn=policy_arn)
-            elif state == 'detached':
+            elif state == 'detached' and not policy_arn == "*" :
                 try:
                     client.detach_role_policy(
                         RoleName=r['RoleName'],
                         PolicyArn=policy_arn)
                 except client.exceptions.NoSuchEntityException:
                     pass
+            elif state == 'detached' and policy_arn == "*":
+                attached_policy = client.list_attached_role_policies(RoleName=r['RoleName'])
+                policy_arns = [p.get('PolicyArn') for p in attached_policy['AttachedPolicies']]
+                for parn in policy_arns:
+                    try:
+                        client.detach_role_policy(RoleName=r['RoleName'], PolicyArn=parn)
+                    except client.exceptions.NoSuchEntityException:
+                        continue
+
 
 
 @Role.action_registry.register('delete')
@@ -827,12 +849,13 @@ class RoleDelete(BaseAction):
               match-operator: all
               LastAuthenticated: null
           actions:
-            - delete
+            - type: set-policy
+              state: detached
+              arn: *
+            - type: delete
 
     """
-    schema = type_schema(
-        'delete',
-        force={'type': 'boolean', 'default': False})
+    schema = type_schema('delete')
 
     permissions = ('iam:DeleteRole',)
 
@@ -840,16 +863,11 @@ class RoleDelete(BaseAction):
         client = local_session(self.manager.session_factory).client('iam')
         error = None
         for r in resources:
-            if self.data.get('force', False):
-                attached_policy = client.list_attached_role_policies(RoleName=r['RoleName'])
-                policy_arns = [p.get('PolicyArn') for p in attached_policy['AttachedPolicies']]
-                for parn in policy_arns:
-                    client.detach_role_policy(RoleName=r['RoleName'], PolicyArn=parn)
             try:
                 client.delete_role(RoleName=r['RoleName'])
             except client.exceptions.DeleteConflictException as e:
                 self.log.warning(
-                    "Role:%s cannot be deleted, set force to detach policy and delete"
+                    "Role:%s cannot be deleted, use action: set-policy to detach all policies"
                     % r['Arn'])
                 error = e
             except client.exceptions.NoSuchEntityException:

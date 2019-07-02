@@ -3,12 +3,12 @@
     "data": {
         "AttachedPolicies": [
             {
-                "PolicyName": "AmazonEC2ContainerRegistryFullAccess",
-                "PolicyArn": "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+                "PolicyName": "AlexaForBusinessFullAccess",
+                "PolicyArn": "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
             },
             {
-                "PolicyName": "AmazonAPIGatewayPushToCloudWatchLogs",
-                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+                "PolicyName": "AlexaForBusinessDeviceSetup",
+                "PolicyArn": "arn:aws:iam::aws:policy/AlexaForBusinessDeviceSetup"
             },
             {
                 "PolicyName": "AdministratorAccess",
@@ -17,13 +17,13 @@
         ],
         "IsTruncated": false,
         "ResponseMetadata": {
-            "RequestId": "3ebaf5a4-945d-11e9-9c45-615ae964032e",
+            "RequestId": "aba2481c-9cdf-11e9-a119-f17d98cf0d01",
             "HTTPStatusCode": 200,
             "HTTPHeaders": {
-                "x-amzn-requestid": "3ebaf5a4-945d-11e9-9c45-615ae964032e",
+                "x-amzn-requestid": "aba2481c-9cdf-11e9-a119-f17d98cf0d01",
                 "content-type": "text/xml",
-                "content-length": "941",
-                "date": "Fri, 21 Jun 2019 19:46:21 GMT"
+                "content-length": "890",
+                "date": "Tue, 02 Jul 2019 15:40:08 GMT"
             },
             "RetryAttempts": 0
         }

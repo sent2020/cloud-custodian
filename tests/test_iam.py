@@ -1469,7 +1469,14 @@ class DeleteRoleAction(BaseTest):
                 'name': 'iam-force-delete-role',
                 'resource': 'iam-role',
                 'filters': [{'tag:Name': 'Pratyush'}],
-                "actions": [{"type": "delete", "force": True}],
+                "actions": [
+                    {
+                        "type": "set-policy",
+                        "state": "detached",
+                        "arn": "*",
+                    },
+                    {"type": "delete"}
+                ]
             },
             session_factory=factory
         )

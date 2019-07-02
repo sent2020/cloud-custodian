@@ -4,20 +4,20 @@
         "Role": {
             "Path": "/",
             "RoleName": "c7n-pratyush-test",
-            "RoleId": "AROA4WFP4XXCRQBN4WXZD",
-            "Arn": "arn:aws:iam::XXXXXXXXXXXX:role/c7n-pratyush-test",
+            "RoleId": "AROA4WFP4XXCU3YKFXPZ3",
+            "Arn": "arn:aws:iam::872247246277:role/c7n-pratyush-test",
             "CreateDate": {
                 "__class__": "datetime",
                 "year": 2019,
-                "month": 6,
-                "day": 21,
-                "hour": 19,
-                "minute": 45,
-                "second": 58,
+                "month": 7,
+                "day": 2,
+                "hour": 15,
+                "minute": 36,
+                "second": 16,
                 "microsecond": 0
             },
-            "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22apigateway.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
-            "Description": "Allows API Gateway to push logs to CloudWatch Logs.",
+            "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22lambda.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
+            "Description": "Allows Lambda functions to call AWS services on your behalf.",
             "MaxSessionDuration": 3600,
             "Tags": [
                 {
@@ -27,13 +27,13 @@
             ]
         },
         "ResponseMetadata": {
-            "RequestId": "3ea12c76-945d-11e9-acaf-bb57d635757b",
+            "RequestId": "ab6ce07e-9cdf-11e9-8e8b-a729701c2096",
             "HTTPStatusCode": 200,
             "HTTPHeaders": {
-                "x-amzn-requestid": "3ea12c76-945d-11e9-acaf-bb57d635757b",
+                "x-amzn-requestid": "ab6ce07e-9cdf-11e9-8e8b-a729701c2096",
                 "content-type": "text/xml",
-                "content-length": "1033",
-                "date": "Fri, 21 Jun 2019 19:46:21 GMT"
+                "content-length": "1017",
+                "date": "Tue, 02 Jul 2019 15:40:07 GMT"
             },
             "RetryAttempts": 0
         }

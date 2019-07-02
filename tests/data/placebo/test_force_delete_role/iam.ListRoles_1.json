@@ -6,7 +6,7 @@
                 "Path": "/aws-service-role/support.amazonaws.com/",
                 "RoleName": "AWSServiceRoleForSupport",
                 "RoleId": "AROAJWGLHKEUYCDFCDPXG",
-                "Arn": "arn:aws:iam::XXXXXXXXXXXX:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
+                "Arn": "arn:aws:iam::872247246277:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
                 "CreateDate": {
                     "__class__": "datetime",
                     "year": 2019,
@@ -24,32 +24,32 @@
             {
                 "Path": "/",
                 "RoleName": "c7n-pratyush-test",
-                "RoleId": "AROA4WFP4XXCRQBN4WXZD",
-                "Arn": "arn:aws:iam::XXXXXXXXXXXX:role/c7n-pratyush-test",
+                "RoleId": "AROA4WFP4XXCU3YKFXPZ3",
+                "Arn": "arn:aws:iam::872247246277:role/c7n-pratyush-test",
                 "CreateDate": {
                     "__class__": "datetime",
                     "year": 2019,
-                    "month": 6,
-                    "day": 21,
-                    "hour": 19,
-                    "minute": 45,
-                    "second": 58,
+                    "month": 7,
+                    "day": 2,
+                    "hour": 15,
+                    "minute": 36,
+                    "second": 16,
                     "microsecond": 0
                 },
-                "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22apigateway.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
-                "Description": "Allows API Gateway to push logs to CloudWatch Logs.",
+                "AssumeRolePolicyDocument": "%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22lambda.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D",
+                "Description": "Allows Lambda functions to call AWS services on your behalf.",
                 "MaxSessionDuration": 3600
             }
         ],
         "IsTruncated": false,
         "ResponseMetadata": {
-            "RequestId": "3e7ed689-945d-11e9-9c45-615ae964032e",
+            "RequestId": "ab2c2dad-9cdf-11e9-ba31-51c4e4fb1518",
             "HTTPStatusCode": 200,
             "HTTPHeaders": {
-                "x-amzn-requestid": "3e7ed689-945d-11e9-9c45-615ae964032e",
+                "x-amzn-requestid": "ab2c2dad-9cdf-11e9-ba31-51c4e4fb1518",
                 "content-type": "text/xml",
-                "content-length": "1813",
-                "date": "Fri, 21 Jun 2019 19:46:20 GMT"
+                "content-length": "1797",
+                "date": "Tue, 02 Jul 2019 15:40:07 GMT"
             },
             "RetryAttempts": 0
         }

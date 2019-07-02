@@ -5,7 +5,7 @@
             "Path": "/aws-service-role/support.amazonaws.com/",
             "RoleName": "AWSServiceRoleForSupport",
             "RoleId": "AROAJWGLHKEUYCDFCDPXG",
-            "Arn": "arn:aws:iam::XXXXXXXXXXXX:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
+            "Arn": "arn:aws:iam::872247246277:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
             "CreateDate": {
                 "__class__": "datetime",
                 "year": 2019,
@@ -21,13 +21,13 @@
             "MaxSessionDuration": 3600
         },
         "ResponseMetadata": {
-            "RequestId": "3e9ac3a9-945d-11e9-acaf-bb57d635757b",
+            "RequestId": "ab608431-9cdf-11e9-8e8b-a729701c2096",
             "HTTPStatusCode": 200,
             "HTTPHeaders": {
-                "x-amzn-requestid": "3e9ac3a9-945d-11e9-acaf-bb57d635757b",
+                "x-amzn-requestid": "ab608431-9cdf-11e9-8e8b-a729701c2096",
                 "content-type": "text/xml",
                 "content-length": "1015",
-                "date": "Fri, 21 Jun 2019 19:46:21 GMT"
+                "date": "Tue, 02 Jul 2019 15:40:07 GMT"
             },
             "RetryAttempts": 0
         }
