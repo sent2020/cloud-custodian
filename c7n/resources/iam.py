@@ -853,7 +853,8 @@ class RoleDelete(BaseAction):
         client = local_session(self.manager.session_factory).client('iam')
         error = None
         if self.data.get('force', False):
-            policy_setter = self.manager.action_registry['set-policy']({'state': 'detached', 'arn': '*'}, self.manager)
+            policy_setter = self.manager.action_registry['set-policy'](
+                {'state': 'detached', 'arn': '*'}, self.manager)
             policy_setter.process(resources)
         for r in resources:
             try:
