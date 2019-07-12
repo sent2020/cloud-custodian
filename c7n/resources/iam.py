@@ -815,11 +815,12 @@ class SetPolicy(BaseAction):
                     continue
             elif state == 'detached' and policy_arn == "*":
                 try:
-                    self.detach_all_policies(client, r)
+                    self.detach_all_policies(r)
                 except client.exceptions.NoSuchEntityException:
                     continue
 
-    def detach_all_policies(self, client, resource):
+    def detach_all_policies(self, resource):
+        client = local_session(self.manager.session_factory).client('iam')
         attached_policy = client.list_attached_role_policies(RoleName=resource['RoleName'])
         policy_arns = [p.get('PolicyArn') for p in attached_policy['AttachedPolicies']]
         for parn in policy_arns:
