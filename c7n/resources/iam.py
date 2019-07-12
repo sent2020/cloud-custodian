@@ -794,13 +794,15 @@ class SetPolicy(BaseAction):
 
     permissions = ('iam:AttachRolePolicy', 'iam:DetachRolePolicy',)
 
+    def validate(self):
+        if self.data.get('state') == 'attached' and self.data.get('arn') == "*":
+            raise PolicyValidationError(
+                'State should be detached when arn is * on %s' % (self.manager.data))
+
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('iam')
         policy_arn = self.data['arn']
         state = self.data['state']
-        if state == 'attached' and policy_arn == "*":
-            raise PolicyValidationError(
-                'State should be detached when arn is * on %s' % (self.manager.data))
         for r in resources:
             if state == 'attached':
                 client.attach_role_policy(
@@ -815,12 +817,11 @@ class SetPolicy(BaseAction):
                     continue
             elif state == 'detached' and policy_arn == "*":
                 try:
-                    self.detach_all_policies(r)
+                    self.detach_all_policies(client, r)
                 except client.exceptions.NoSuchEntityException:
                     continue
 
-    def detach_all_policies(self, resource):
-        client = local_session(self.manager.session_factory).client('iam')
+    def detach_all_policies(self, client, resource):
         attached_policy = client.list_attached_role_policies(RoleName=resource['RoleName'])
         policy_arns = [p.get('PolicyArn') for p in attached_policy['AttachedPolicies']]
         for parn in policy_arns:

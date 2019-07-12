@@ -1486,6 +1486,18 @@ class DeleteRoleAction(BaseTest):
             len((client.list_attached_role_policies(RoleName=resources[0]['RoleName']))
             ['AttachedPolicies']), 0)
 
+    def test_set_policy_validation_error(self):
+        self.assertRaises(
+            PolicyValidationError,
+            self.load_policy,
+            {
+                "name": "iam-policy-error",
+                "resource": "iam-role",
+                'filters': [{'tag:Name': 'Pratyush'}],
+                "actions": [{"type": "set-policy", "state": "attached", "arn": "*"}],
+            }
+        )
+
     def test_force_delete_role(self):
         factory = self.replay_flight_data("test_force_delete_role")
         policy = self.load_policy(
